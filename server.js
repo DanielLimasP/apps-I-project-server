@@ -1,53 +1,38 @@
+//Como siempre, empezamos definiendo express y tal
 const express = require('express'),
 http = require('http'),
 app = express(),
 server = http.createServer(app),
 io = require('socket.io').listen(server);
+
 app.get('/', (req, res) => {
-
-res.send('Chat Server is running on port 3000')
+  res.send('El servidor está esuchando en el puerto 3000')
 });
-io.on('connection', (socket) => {
 
-console.log('user connected')
-
-socket.on('join', function(userNickname) {
-
-        console.log(userNickname +" : has joined the chat "  );
-
-        socket.broadcast.emit('userjoinedthechat',userNickname +" : has joined the chat ");
+  io.on('connection', (socket) => {
+    console.log('Usuario conectado')
+    //Función socket.on "join" que detecta cuando se conecté un nuevo usuario
+    socket.on('join', function(userNickname) {
+        console.log(userNickname +" : Se ha unido al chat"  );
+        socket.broadcast.emit('userjoinedthechat', userNickname +" : Se ha unido al chat");
     });
-
-
-socket.on('messagedetection', (senderNickname,messageContent) => {
-       
-       //log the message in console 
-
+    //Función socket.on "messagedetection" que detecta cuando un usuario
+    socket.on('messagedetection', (senderNickname,messageContent) => {
+       //Mostramos el mensaje en la consola
        console.log(senderNickname+" :" +messageContent)
-        //create a message object 
-       let  message = {"message":messageContent, "senderNickname":senderNickname}
-          // send the message to the client side  
+       //Creamos un objeto "mensaje"
+       var  message = {"message":messageContent, "senderNickname":senderNickname}
+       //Y emitimos el mensaje al cliente
        io.emit('message', message );
-     
-      });
-      
-  
- socket.on('disconnect', function() {
-    console.log( ' user has left ')
-    socket.broadcast.emit("userdisconnect"," user has left ") 
-
+    });
+    //Función socket.on "disconnect" que detecta cuando un usuario se desconecta
+     socket.on('disconnect', function() {
+        console.log( ' El usuario se ha desconectado ')
+        socket.broadcast.emit("userdisconnect"," El usuario se ha desconectado ")
+    });
 });
-
-
-
-});
-
-
-
-
 
 server.listen(3000,()=>{
-
-console.log('Node app is running on port 3000');
+console.log('El servidor está esuchando en el puerto 3000');
 
 });
