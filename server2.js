@@ -56,7 +56,7 @@ function SocketObject(env, server){
       socket.on('newBall', (ballData) => {
         console.log("newBall");
         console.log(ballData);
-        var ball = new Ball(userNickname, ballData.x, ballData.y, ballData.r);
+        var ball = new Ball(ballData.nickname, ballData.x, ballData.y, ballData.r);
         balls.push(ball);
         }
       );
@@ -67,15 +67,16 @@ function SocketObject(env, server){
               for(var i = 0; i < balls.length; i++){
                 if(socket.id == balls[i].id){
                   ball = balls[i];
+                  ball.x = ballData.x;
+                  ball.y = ballData.y;
+                  ball.r = ballData.r;
                 }
               }
-              ball.x = ballData.x;
-              ball.y = ballData.y;
-              ball.r = ballData.r;
+
             }
 
           );
-          
+
       //Función socket.on "messagedetection" que detecta cuando un usuario
       socket.on('messagedetection', (senderNickname,messageContent) => {
          //Mostramos el mensaje en la consola
