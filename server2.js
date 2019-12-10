@@ -48,28 +48,34 @@ function SocketObject(env, server){
       //Función socket.on "join" que detecta cuando se conecté un nuevo usuario
       socket.on('join', function(userNickname) {
           var  message = {"message": 'El usuario '+userNickname+' se ha unido al chat', "senderNickname": '🔴 Server'}
-          console.log(userNickname+": Se ha unido al chat");
+          console.log(userNickname+": Se ha unido al chat " +socket.id);
           socket.broadcast.emit('userjoinedthechat', message);
           //socket.broadcast.emit('userjoinedthechat', userNickname +" : Se ha unido al chat");
       });
+
       socket.on('newBall', (ballData) => {
+        console.log("newBall");
+        console.log(ballData);
         var ball = new Ball(userNickname, ballData.x, ballData.y, ballData.r);
         balls.push(ball);
         }
       );
       socket.on('update', (ballData) => {
-              var ball;
+        console.log("update");
+        console.log(ballData);
+            var ball;
               for(var i = 0; i < balls.length; i++){
-                if(socket.nickname == balls[i].nickname){
+                if(socket.id == balls[i].id){
                   ball = balls[i];
                 }
               }
               ball.x = ballData.x;
               ball.y = ballData.y;
               ball.r = ballData.r;
-              ball.nickname = ballData.nickname;
             }
+
           );
+          
       //Función socket.on "messagedetection" que detecta cuando un usuario
       socket.on('messagedetection', (senderNickname,messageContent) => {
          //Mostramos el mensaje en la consola
